@@ -1,0 +1,9 @@
+# CMake and Conan build output
+/build/
+/cmake-build-*/
+/CMakeUserPresets.json
+/compile_commands.json
+/.clangd
+
+# macOS metadata
+.DS_Store

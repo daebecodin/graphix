@@ -1,0 +1,60 @@
+{
+    "version": 3,
+    "vendor": {
+        "conan": {}
+    },
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 15,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "conan-debug",
+            "displayName": "'conan-debug' config",
+            "description": "'conan-debug' configure using 'Ninja' generator",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_POLICY_DEFAULT_CMP0091": "NEW",
+                "CMAKE_BUILD_TYPE": "Debug"
+            },
+            "environment": {
+                "LLVM_INSTALL_DIR": "/Users/dmac/.conan2/p/b/llvm-42d30c077eb0a/p",
+                "CC": "clang",
+                "CXX": "clang++",
+                "AS": "clang",
+                "AR": "llvm-ar",
+                "LD": "ld",
+                "NM": "llvm-nm",
+                "OBJCOPY": "llvm-objcopy",
+                "OBJDUMP": "llvm-objdump",
+                "RANLIB": "llvm-ranlib",
+                "SIZE": "llvm-size",
+                "STRINGS": "llvm-strings",
+                "STRIP": "llvm-strip",
+                "ADDR2LINE": "llvm-addr2line",
+                "GDB": "lldb",
+                "PATH": "/Users/dmac/.conan2/p/b/llvm-42d30c077eb0a/p/bin:/Users/dmac/.conan2/p/ninja0d2a721f2424c/p/bin:/Users/dmac/.conan2/p/cmake25da4a7245917/p/CMake.app/Contents/bin:$penv{PATH}"
+            },
+            "cmakeExecutable": "/Users/dmac/.conan2/p/cmake25da4a7245917/p/CMake.app/Contents/bin/cmake",
+            "toolchainFile": "generators/conan_toolchain.cmake",
+            "binaryDir": "/Users/dmac/graphics/sdl/build/Debug"
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "conan-debug",
+            "configurePreset": "conan-debug",
+            "jobs": 11
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "conan-debug",
+            "configurePreset": "conan-debug",
+            "execution": {
+                "jobs": 11
+            }
+        }
+    ]
+}

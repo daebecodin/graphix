@@ -1,0 +1,1 @@
+. "/Users/dmac/graphics/sdl/build/Debug/generators/conanrunenv-debug-armv8.sh"

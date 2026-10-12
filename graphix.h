@@ -72,8 +72,23 @@ namespace graphix {
             std::uint32_t storage_buffer_count,
             std::uint32_t uniform_buffer_count
 
-            );
+);
+}
 
+namespace graphix::demo {
+
+    struct Demo 
+    {
+        const char* name;
+        int (*graphix_init)(app_state* app);
+        // update
+        // draw
+        int (graphix_quit)(app_state* app);
+
+    };
+
+
+    extern Demo clear_screen_demo;
 
 }
 
@@ -83,19 +98,19 @@ namespace graphix::shader_paths {
      * @return compiled DIXL shader path
      */
     inline std::string compiled_DIXL() 
-        {
-            std::string str = "%sshaders/compiled/DIXL/%s.dixl";
-            return str;
-        }
+    {
+        std::string str = "%sshaders/compiled/DIXL/%s.dixl";
+        return str;
+    }
 
     /**
      * @return compiled MSL shader path
      */
     inline std::string compiled_MSL() 
-        {
-            std::string str = "%sshaders/compiled/MSL/%s.msl";
-            return str;
-        }
+    {
+        std::string str = "%sshaders/compiled/MSL/%s.msl";
+        return str;
+    }
 
     /**
      * @return compiled SPIVR shader path

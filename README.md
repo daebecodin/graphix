@@ -1,6 +1,6 @@
-# SDL Playground
+# Graphix
 
-A C++20 playground for learning SDL3's GPU API and compiling HLSL shaders.
+A C++20 graphics project using SDL3's GPU API and HLSL shaders.
 
 ## Project setup (macOS)
 
@@ -20,12 +20,15 @@ brew install cmake ninja conan
 Clone the project and enter its root directory:
 
 ```bash
-git clone https://github.com/daebecodin/SDL-Playground.git
-cd SDL-Playground
+git clone https://github.com/daebecodin/graphix.git
+cd graphix
 ```
 
-The commands below assume you are in this directory. Build files and downloaded
-shadercross sources stay under the ignored `build/` directory.
+The commands below assume you are in the directory containing `conanfile.py`
+and `CMakeLists.txt`. After a fresh clone, this is `graphix/`. In the current
+local workspace, these files are under `graphix/sdl/`, so run the setup commands
+from that `sdl/` directory. Build files and downloaded shadercross sources stay
+under its ignored `build/` directory.
 
 ### Install project dependencies
 
@@ -76,7 +79,7 @@ These instructions are based on upstream's
 [CMake configuration](https://github.com/libsdl-org/SDL_shadercross/blob/main/CMakeLists.txt)
 and [macOS build workflow](https://github.com/libsdl-org/SDL_shadercross/blob/main/.github/workflows/main.yml).
 
-Install SDL3 for this separate tool build. The playground itself still uses
+Install SDL3 for this separate tool build. Graphix itself still uses
 Conan's SDL3 dependency.
 
 ```bash

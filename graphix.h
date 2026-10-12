@@ -1,8 +1,8 @@
 #pragma once
 
+#include "SDL3/SDL_video.h"
 #include <SDL3/SDL.h>
 #include <cstdint>
-#include <string>
 
 namespace graphix {
 
@@ -62,7 +62,7 @@ namespace graphix {
      * @param storage_texture_count Number if storage textures defined in shader
      * @param storage_buffer_count Number of storage buffers defined in shader
      * @param uniform_buffer_count Number of uniform buffers defined in shader
-     * @return
+     * @return shader
      */
     SDL_GPUShader* load_shader(
             SDL_GPUDevice* device,
@@ -75,49 +75,5 @@ namespace graphix {
 );
 }
 
-namespace graphix::demo {
-
-    struct Demo 
-    {
-        const char* name;
-        int (*graphix_init)(app_state* app);
-        // update
-        // draw
-        int (graphix_quit)(app_state* app);
-
-    };
 
 
-    extern Demo clear_screen_demo;
-
-}
-
-namespace graphix::shader_paths {
-
-    /**
-     * @return compiled DIXL shader path
-     */
-    inline std::string compiled_DIXL() 
-    {
-        std::string str = "%sshaders/compiled/DIXL/%s.dixl";
-        return str;
-    }
-
-    /**
-     * @return compiled MSL shader path
-     */
-    inline std::string compiled_MSL() 
-    {
-        std::string str = "%sshaders/compiled/MSL/%s.msl";
-        return str;
-    }
-
-    /**
-     * @return compiled SPIVR shader path
-     */
-    inline std::string compiled_SPIVR()
-    {
-        std::string str = "%sshaders/compiled/SPIVR/%s.spv";
-        return str;
-    }
-}

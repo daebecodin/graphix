@@ -1,10 +1,11 @@
-#include "graphix.h"
 #include "SDL3/SDL_stdinc.h"
 #include <SDL3/SDL_filesystem.h>
 #include <SDL3/SDL_gpu.h>
 #include <SDL3/SDL_video.h>
 #include <SDL3/SDL.h>
 #include <cstdint>
+#include "graphix.h"
+#include "shaders.h"
 
 /**
  * @brief window width

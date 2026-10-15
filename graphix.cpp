@@ -34,7 +34,7 @@ int graphix::graphix_init(gpx::app_state* app, SDL_WindowFlags windowFlags) {
      * - debug mode true
      * - allow SDL to chose best graphics backend
      */
-    app -> device = SDL_CreateGPUDevice(
+    app -> gpx_device = SDL_CreateGPUDevice(
             SDL_GPU_SHADERFORMAT_MSL | SDL_GPU_SHADERFORMAT_METALLIB | 
             SDL_GPU_SHADERFORMAT_DXIL | SDL_GPU_SHADERFORMAT_SPIRV,
             true,
@@ -44,7 +44,7 @@ int graphix::graphix_init(gpx::app_state* app, SDL_WindowFlags windowFlags) {
     /*
      * GPU device creation error handling
      */
-    if ( app -> device == NULL )
+    if ( app -> gpx_device == NULL )
     {
         SDL_Log("GPU Device Creation Failure: %s",  SDL_GetError());
         return -1;
@@ -55,7 +55,7 @@ int graphix::graphix_init(gpx::app_state* app, SDL_WindowFlags windowFlags) {
      * windows is created with a window-title, window dimensions, and window flags
      */
 
-    app -> window = SDL_CreateWindow(
+    app -> gpx_window = SDL_CreateWindow(
             app -> appName,
             windowWidth, 
             windowHeight,  
@@ -65,7 +65,7 @@ int graphix::graphix_init(gpx::app_state* app, SDL_WindowFlags windowFlags) {
     /*
      * Window Creation Error Handling
      */
-    if ( app -> window == NULL )
+    if ( app -> gpx_window == NULL )
     {
         SDL_Log("Application Window Creation Failure: %s", SDL_GetError());
         return -1;
@@ -74,7 +74,7 @@ int graphix::graphix_init(gpx::app_state* app, SDL_WindowFlags windowFlags) {
     /*
      * Claiming the application window and creating a swap chain for the window
      */
-    if ( !SDL_ClaimWindowForGPUDevice( app -> device, app -> window ) )
+    if ( !SDL_ClaimWindowForGPUDevice( app -> gpx_device, app -> gpx_window ) )
     {
         SDL_Log("Cannot Claim Window: %s", SDL_GetError());
         return -1;
@@ -91,9 +91,9 @@ int graphix::graphix_init(gpx::app_state* app, SDL_WindowFlags windowFlags) {
  */
 void graphix::graphix_quit(gpx::app_state* app) 
 {
-    SDL_ReleaseWindowFromGPUDevice( app -> device, app -> window );
-    SDL_DestroyWindow( app -> window );
-    SDL_DestroyGPUDevice( app -> device );
+    SDL_ReleaseWindowFromGPUDevice( app -> gpx_device, app -> gpx_window );
+    SDL_DestroyWindow( app -> gpx_window );
+    SDL_DestroyGPUDevice( app -> gpx_device );
 }
 
 /**
@@ -137,7 +137,7 @@ void graphix::init_asset_loader()
  * @return NULL on failure
  */
 SDL_GPUShader* load_shader(
-        SDL_GPUDevice* device,
+        SDL_GPUDevice* gpx_device,
         const char* shader_file_name,
         std::uint32_t sampler_count,
         std::uint32_t storage_texture_count,
@@ -163,7 +163,7 @@ SDL_GPUShader* load_shader(
     }
 
     char shader_full_path[256];
-    SDL_GPUShaderFormat supported_shader_formats = SDL_GetGPUShaderFormats(device);
+    SDL_GPUShaderFormat supported_shader_formats = SDL_GetGPUShaderFormats(gpx_device);
     SDL_GPUShaderFormat graphix_shader_format = SDL_GPU_SHADERFORMAT_INVALID;
     const char* graphix_entry_point;
 
@@ -227,7 +227,7 @@ SDL_GPUShader* load_shader(
         .num_uniform_buffers = uniform_buffer_count,
     };
 
-    SDL_GPUShader* graphix_shader = SDL_CreateGPUShader(device, &graphix_shader_info);
+    SDL_GPUShader* graphix_shader = SDL_CreateGPUShader(gpx_device, &graphix_shader_info);
     if ( graphix_shader == NULL )
     {
         SDL_Log("Shader creation failed: %s", SDL_GetError());

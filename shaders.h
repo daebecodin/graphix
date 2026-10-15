@@ -13,7 +13,7 @@ namespace graphix::shader_paths {
      */
     inline std::string compiled_DIXL() 
     {
-        std::string str = "%sshaders/compiled/DIXL/%s.dixl";
+        std::string str = "%sshaders/compiled/DXIL/%s.dixl";
         return str;
     }
 
@@ -31,7 +31,7 @@ namespace graphix::shader_paths {
      */
     inline std::string compiled_SPIVR()
     {
-        std::string str = "%sshaders/compiled/SPIVR/%s.spv";
+        std::string str = "%sshaders/compiled/SPVIR/%s.spv";
         return str;
     }
 }

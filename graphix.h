@@ -23,11 +23,11 @@ namespace graphix {
         /**
          * @brief Application window
          */
-        SDL_Window* window;
+        SDL_Window* gpx_window;
         /**
          * @brief Application GPU Device
          */
-        SDL_GPUDevice* device;
+        SDL_GPUDevice* gpx_device;
         /**
          * @brief Change between each frame
          */
@@ -65,7 +65,7 @@ namespace graphix {
      * @return shader
      */
     SDL_GPUShader* load_shader(
-            SDL_GPUDevice* device,
+            SDL_GPUDevice* gpx_device,
             const char* shader_file_ame,
             std::uint32_t sampler_count,
             std::uint32_t storage_texture_count,

@@ -1,6 +1,5 @@
 
 #include <SDL3/SDL.h>
-#include <vector>
 #include "SDL3/SDL_error.h"
 #include "SDL3/SDL_gpu.h"
 #include "SDL3/SDL_video.h"
@@ -11,20 +10,26 @@
 namespace gpx = graphix;
 namespace gpx_demo = graphix::demo;
 
-static std::vector<gpx_demo::Demo> demos;
-
+// initialize world
 static int init_grpahix(gpx::app_state* app) 
 {
     return gpx::graphix_init(app, SDL_WINDOW_RESIZABLE);
 
 } 
 
-
+// idk
 static int graphix_refresh(gpx::app_state* app) 
 {
     return 0;
 }
 
+/*
+ * Here we initialize and supply a command buffer for use in creating the swap-chain object 
+ *
+ * Once both are initialized we create our render pass object for per frame execution
+ *
+ * Ending application on quit
+ */
 static int graphix_display(gpx::app_state* app) 
 {
     SDL_GPUCommandBuffer* gpx_buffer = SDL_AcquireGPUCommandBuffer(app -> gpx_device);
@@ -46,7 +51,7 @@ static int graphix_display(gpx::app_state* app)
     {
         SDL_GPUColorTargetInfo gpx_color_info {};
         gpx_color_info.texture = gpx_swapchain_texture;
-        gpx_color_info.clear_color = (SDL_FColor) { 0.3f, 0.4f, 0.5f, 1.0f };
+        gpx_color_info.clear_color = SDL_FColor { 0.3f, 0.4f, 0.5f, 1.0f };
         gpx_color_info.load_op = SDL_GPU_LOADOP_CLEAR;
         gpx_color_info.store_op = SDL_GPU_STOREOP_STORE;
 
@@ -60,6 +65,9 @@ static int graphix_display(gpx::app_state* app)
     return 0;
 } 
 
+/*
+ * Close app
+ */
 static void quit_graphix(gpx::app_state* app)
 {
     gpx::graphix_quit(app);

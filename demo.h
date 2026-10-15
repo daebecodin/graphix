@@ -28,8 +28,9 @@ namespace graphix::demo {
 
     inline int graphix_display(graphix::app_state* app)
     {
+        return 0;
 
-    }
+    };
 
     inline void quit(graphix::app_state* app)
     {

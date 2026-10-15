@@ -18,6 +18,16 @@ get_filename_component(
     ABSOLUTE
 )
 
+set(SDL_PLAYGROUND_INCLUDE_DIRS
+    "${SDL_PLAYGROUND_ROOT}"
+    "${SDL_PLAYGROUND_ROOT}/include"
+)
+
+if(NOT TARGET graphix_headers)
+    add_library(graphix_headers INTERFACE)
+    target_include_directories(graphix_headers INTERFACE ${SDL_PLAYGROUND_INCLUDE_DIRS})
+endif()
+
 function(sdl_playground_add_executable target_name)
     cmake_parse_arguments(ARG "" "" "SOURCES" ${ARGN})
 
@@ -26,7 +36,7 @@ function(sdl_playground_add_executable target_name)
     endif()
 
     add_executable("${target_name}" ${ARG_SOURCES})
-    target_link_libraries("${target_name}" PRIVATE SDL3::SDL3)
+    target_link_libraries("${target_name}" PRIVATE graphix_headers SDL3::SDL3)
     target_compile_options(
         "${target_name}"
         PRIVATE

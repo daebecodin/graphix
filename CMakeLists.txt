@@ -21,7 +21,7 @@ sdl_playground_add_executable(main SOURCES ${GRAPHIX_SOURCES})
 
 # Give clangd dependency paths even for files that have no build command yet.
 set(SDL_PLAYGROUND_CLANGD_FLAGS "    - '-xc++'\n    - '-std=c++${CMAKE_CXX_STANDARD}'\n")
-foreach(include_directory IN LISTS SDL3_INCLUDE_DIRS)
+foreach(include_directory IN LISTS SDL_PLAYGROUND_INCLUDE_DIRS SDL3_INCLUDE_DIRS)
     string(APPEND SDL_PLAYGROUND_CLANGD_FLAGS "    - '-I${include_directory}'\n")
 endforeach()
 if(APPLE)

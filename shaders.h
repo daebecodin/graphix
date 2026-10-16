@@ -9,11 +9,11 @@
 namespace graphix::shader_paths {
 
     /**
-     * @return compiled DIXL shader path
+     * @return compiled DXIL shader path
      */
-    inline std::string compiled_DIXL() 
+    inline std::string compiled_DXIL()
     {
-        std::string str = "%sshaders/compiled/DXIL/%s.dixl";
+        std::string str = "%sshaders/compiled/DXIL/%s.dxil";
         return str;
     }
 
@@ -27,11 +27,11 @@ namespace graphix::shader_paths {
     }
 
     /**
-     * @return compiled SPIVR shader path
+     * @return compiled SPIRV shader path
      */
-    inline std::string compiled_SPIVR()
+    inline std::string compiled_SPIRV()
     {
-        std::string str = "%sshaders/compiled/SPVIR/%s.spv";
+        std::string str = "%sshaders/compiled/SPIRV/%s.spv";
         return str;
     }
 }

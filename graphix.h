@@ -28,6 +28,13 @@ namespace graphix {
          * @brief Application GPU Device
          */
         SDL_GPUDevice* gpx_device;
+        /*
+         * Menu options
+         */
+        bool left_pressed;
+        bool right_pressed;
+        bool down_pressed;
+        bool up_pressed;
         /**
          * @brief Change between each frame
          */

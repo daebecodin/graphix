@@ -58,17 +58,38 @@ Configure CMake using the generated preset:
 cmake --preset conan-debug
 ```
 
-When an executable example is ready, build it with:
+Build the application with:
 
 ```bash
 cmake --build --preset conan-debug
 ```
 
-**Current status:** the project is still being assembled. `graphix.cpp` contains
-SDL helpers but does not yet define an application entry point. There is no
-runnable demo yet; the current CMake helper treats each `.cpp` file as an
-executable, so building all targets will fail until the example targets and
-entry points are in place.
+The executable is `build/Debug/main`. Compile and copy the shaders as described
+below before running the triangle demo.
+
+### Rebuild and run during development
+
+Run these commands from the project root after changing C++ files:
+
+```bash
+cmake --build build/Debug
+./build/Debug/main
+```
+
+After adding or changing HLSL shaders, compile them before rebuilding and running:
+
+```bash
+export PATH="$PWD/build/SDL_shadercross-build:$PATH"
+mkdir -p shaders/compiled/SPIRV shaders/compiled/MSL shaders/compiled/DXIL
+(cd shaders/source && bash compiles.sh)
+cmake --build build/Debug
+./build/Debug/main
+```
+
+Build shadercross once using the instructions below before using this block.
+Shader compilation is only needed after adding or changing HLSL files, or when
+the compiled outputs are missing. Repeat the `export` in each new terminal
+session. The directory creation commands are safe to repeat.
 
 ### Build the shadercross CLI
 
@@ -124,16 +145,16 @@ After creating or editing a shader, run these commands from the project root:
 
 ```bash
 mkdir -p shaders/compiled/SPIRV shaders/compiled/MSL shaders/compiled/DXIL
-cd shaders/source
-bash compiles.sh
-cd ../..
+(cd shaders/source && bash compiles.sh)
 ```
 
 The script writes each shader to all three output directories. Use the exact
 spellings `SPIRV`, `MSL`, and `DXIL`; the directories are not tracked when empty,
 so the `mkdir` command is needed for a fresh checkout. With no matching HLSL
 files, the script produces no output. Shader compilation is a separate step
-from the C++ build.
+from the C++ build. Every CMake build copies the compiled shaders to
+`build/Debug/shaders/compiled/`, where the loader expects them. Rebuild after
+compiling shaders to refresh that runtime copy.
 
 To compile just one shader, use the CLI directly from the project root:
 
@@ -145,6 +166,10 @@ To compile just one shader, use the CLI directly from the project root:
 Replace `example.vert.hlsl` with your shader's filename and create the output
 directory first. Change the output extension to `.spv` or `.dxil` to select
 SPIR-V or DXIL.
+
+## TODO
+
+- [ ] Add a color code converter for hex and RGB colors to normalized RGBA values for `SDL_FColor`.
 
 ## Other platforms
 

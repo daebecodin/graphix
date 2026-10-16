@@ -12,7 +12,7 @@ int main()
     }
 
     graphix::app_state app {};
-    auto& demo = graphix::demo::clear_screen_demo;
+    auto& demo = graphix::demo::basic_triangle_demo;
     app.appName = demo.name;
     app.basePath = SDL_GetBasePath();
     graphix::init_asset_loader();
@@ -38,6 +38,12 @@ int main()
 
     while (running)
     {
+        // These flags represent a new press this frame, not a held key.
+        app.left_pressed = false;
+        app.right_pressed = false;
+        app.down_pressed = false;
+        app.up_pressed = false;
+
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
@@ -46,6 +52,19 @@ int main()
                  event.window.windowID == SDL_GetWindowID(app.gpx_window)))
             {
                 running = false;
+            }
+
+            if (event.type == SDL_EVENT_KEY_DOWN && !event.key.repeat &&
+                event.key.windowID == SDL_GetWindowID(app.gpx_window))
+            {
+                switch (event.key.key)
+                {
+                    case SDLK_LEFT: app.left_pressed = true; break;
+                    case SDLK_RIGHT: app.right_pressed = true; break;
+                    case SDLK_DOWN: app.down_pressed = true; break;
+                    case SDLK_UP: app.up_pressed = true; break;
+                    default: break;
+                }
             }
         }
 

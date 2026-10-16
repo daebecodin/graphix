@@ -136,7 +136,7 @@ void graphix::init_asset_loader()
  * @return SDL_GPUShader* on sucess
  * @return NULL on failure
  */
-SDL_GPUShader* load_shader(
+SDL_GPUShader* gpx::load_shader(
         SDL_GPUDevice* gpx_device,
         const char* shader_file_name,
         std::uint32_t sampler_count,
@@ -172,7 +172,7 @@ SDL_GPUShader* load_shader(
         SDL_snprintf(
                 shader_full_path, 
                 sizeof(shader_full_path), 
-                gpx_shaders::compiled_DIXL().c_str(), 
+                gpx_shaders::compiled_DXIL().c_str(),
                 base_path, shader_file_name
                 );
         graphix_shader_format = SDL_GPU_SHADERFORMAT_DXIL;
@@ -183,7 +183,7 @@ SDL_GPUShader* load_shader(
         SDL_snprintf(
                 shader_full_path,
                 sizeof(shader_full_path),
-                gpx_shaders::compiled_SPIVR().c_str(),
+                gpx_shaders::compiled_SPIRV().c_str(),
                 base_path, shader_file_name
                 );
         graphix_shader_format = SDL_GPU_SHADERFORMAT_SPIRV;

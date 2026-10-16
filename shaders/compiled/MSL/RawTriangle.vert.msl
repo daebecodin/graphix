@@ -3,8 +3,8 @@
 
 using namespace metal;
 
-constant float2 _25 = {};
-constant float4 _26 = {};
+constant float2 _23 = {};
+constant float4 _24 = {};
 
 struct main0_out
 {
@@ -15,33 +15,33 @@ struct main0_out
 vertex main0_out main0(uint gl_VertexIndex [[vertex_id]])
 {
     main0_out out = {};
-    float4 _47;
-    float2 _48;
+    float4 _45;
+    float2 _46;
     if (gl_VertexIndex == 0u)
     {
-        _47 = float4(1.0, 0.0, 0.0, 1.0);
-        _48 = float2(-1.0);
+        _45 = float4(0.0, 0.0, 1.0, 1.0);
+        _46 = float2(-1.0);
     }
     else
     {
-        float4 _45;
-        float2 _46;
+        float4 _43;
+        float2 _44;
         if (gl_VertexIndex == 1u)
         {
-            _45 = float4(0.0, 1.0, 0.0, 1.0);
-            _46 = float2(1.0, -1.0);
+            _43 = float4(0.0, 0.0, 1.0, 1.0);
+            _44 = float2(1.0, -1.0);
         }
         else
         {
-            bool _40 = gl_VertexIndex == 2u;
-            _45 = select(_26, float4(0.0, 0.0, 1.0, 1.0), bool4(_40));
-            _46 = select(_25, float2(0.0, 1.0), bool2(_40));
+            bool _38 = gl_VertexIndex == 2u;
+            _43 = select(_24, float4(0.0, 0.0, 1.0, 1.0), bool4(_38));
+            _44 = select(_23, float2(0.0, 1.0), bool2(_38));
         }
-        _47 = _45;
-        _48 = _46;
+        _45 = _43;
+        _46 = _44;
     }
-    out.out_var_TEXCOORD0 = _47;
-    out.gl_Position = float4(_48, 0.0, 1.0);
+    out.out_var_TEXCOORD0 = _45;
+    out.gl_Position = float4(_46, 0.0, 1.0);
     return out;
 }
 

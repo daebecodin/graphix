@@ -3,11 +3,12 @@
 #include "SDL3/SDL_gpu.h"
 #include "SDL3/SDL_video.h"
 #include <array>
+#include <iostream>
 #include "graphix.h"
 #include "demo.h"
 
 // buffer for outline
-static SDL_GPUGraphicsPipeline* outline_pipeliine;
+static SDL_GPUGraphicsPipeline* outline_pipeline;
 
 // buffer for fill-n
 static SDL_GPUGraphicsPipeline* fill_pipeline;
@@ -100,8 +101,8 @@ static int init(gpx::app_state* app)
      * Then initializing a rasterizing pipeline
      */
     gpx_pipeline_info.rasterizer_state.fill_mode = SDL_GPU_FILLMODE_LINE;
-    outline_pipeliine = SDL_CreateGPUGraphicsPipeline(app -> gpx_device, &gpx_pipeline_info);
-    if (!outline_pipeliine)
+    outline_pipeline = SDL_CreateGPUGraphicsPipeline(app -> gpx_device, &gpx_pipeline_info);
+    if (!outline_pipeline)
     {
         SDL_Log("Failed to initialize outline pipeline: %s", SDL_GetError());
         return -1;
@@ -213,8 +214,10 @@ static int draw(gpx::app_state* app)
          *
          * Here we pass our fill and line pipelines to the render pass for rendering each draw frame
          */
+        
         SDL_GPURenderPass* renderPass = SDL_BeginGPURenderPass(cmdbf, &color_info, 1, nullptr);
-        SDL_BindGPUGraphicsPipeline(renderPass, use_wireframe_mode ? outline_pipeliine : fill_pipeline);
+        SDL_BindGPUGraphicsPipeline(renderPass, use_wireframe_mode ? outline_pipeline : fill_pipeline);
+
 
         if (use_small_viewport) 
         {
@@ -223,6 +226,7 @@ static int draw(gpx::app_state* app)
         if (use_scissor_rect) 
         {
             SDL_SetGPUScissor(renderPass, &scissor_rect);
+            
         }
 
         // render 3 lines for the triangle
@@ -242,7 +246,7 @@ static int draw(gpx::app_state* app)
 static void quit(gpx::app_state* app)
 {
 
-    SDL_ReleaseGPUGraphicsPipeline(app -> gpx_device, outline_pipeliine);
+    SDL_ReleaseGPUGraphicsPipeline(app -> gpx_device, outline_pipeline);
     SDL_ReleaseGPUGraphicsPipeline(app -> gpx_device, fill_pipeline);
 
     use_wireframe_mode = false;

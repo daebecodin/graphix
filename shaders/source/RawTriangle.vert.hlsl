@@ -16,14 +16,14 @@ Output main(Input input)
 	if (input.VertexIndex == 0)
 	{
 		pos = (-1.0f).xx;
-		output.Color = float4(1.0f, 0.0f, 0.0f, 1.0f);
+		output.Color = float4(0.0f, 0.0f, 1.0f, 1.0f);
 	}
 	else
 	{
 		if (input.VertexIndex == 1)
 		{
 			pos = float2(1.0f, -1.0f);
-			output.Color = float4(0.0f, 1.0f, 0.0f, 1.0f);
+			output.Color = float4(0.0f, 0.0f, 1.0f, 1.0f);
 		}
 		else
 		{

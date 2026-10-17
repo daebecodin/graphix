@@ -215,10 +215,13 @@ static int init(gpx::app_state* app)
     /*
      * Writing rendering data to the data transfer buffer though its pointer
      *
+     * first 3 properties are corner positions
+     * last 4 properties are rgba codes
+     *
      * This data can be anywhere
      */
-    transfer_data[0] = graphix::position_color_vertex{-1, -1, 0, 255, 0, 0, 255};
-    transfer_data[1] = graphix::position_color_vertex{ 1, -1, 0, 0, 255, 0, 255};
+    transfer_data[0] = graphix::position_color_vertex{-1, -1, 0, 0, 0, 225, 255};
+    transfer_data[1] = graphix::position_color_vertex{ 1, -1, 0, 0, 0, 225, 255};
     transfer_data[2] = graphix::position_color_vertex{ 0,  1, 0, 0, 0, 255, 255};
 
     /*

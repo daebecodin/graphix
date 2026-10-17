@@ -80,7 +80,31 @@ namespace graphix {
             std::uint32_t uniform_buffer_count
 
 );
+
+
+    /*
+     * Vertex Formats
+     */
+    struct position_vertex 
+    {
+        float x, y, z;
+    };
+
+    struct position_color_vertex 
+    {
+        float x, y, z;
+        std::uint8_t r, g, b, a;
+
+    };
+
+    struct position_texture_vertex
+    {
+        float x, y, z;
+        float u, v;
+    };
+
 }
+
 
 
 

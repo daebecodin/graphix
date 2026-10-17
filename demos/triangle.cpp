@@ -13,6 +13,8 @@ static SDL_GPUGraphicsPipeline* outline_pipeline;
 // buffer for fill-n
 static SDL_GPUGraphicsPipeline* fill_pipeline;
 
+static SDL_GPUBuffer* vertex_buffer;
+
 // view port
 static SDL_GPUViewport graphix_viewport { 160, 120, 320, 240, 0.1f, 1.0f };
 
@@ -49,7 +51,7 @@ static int init(gpx::app_state* app)
     /*
      * Create Shaders
      */
-    SDL_GPUShader* vertex_shader = gpx::load_shader(app -> gpx_device, "RawTriangle.vert", 0, 0, 0, 0);
+    SDL_GPUShader* vertex_shader = gpx::load_shader(app -> gpx_device, "PositionColor.vert", 0, 0, 0, 0);
     if (vertex_shader == nullptr) 
     {
         SDL_Log("Failed to initialize vertex shader: %s", SDL_GetError());
@@ -65,19 +67,58 @@ static int init(gpx::app_state* app)
 
 
     /*
-     * Because the api is written in C, when initializing descriptions, 
-     * specifically the format field, They use C compound literals to create 
+     * Because the api is written in C, when initializing structs, 
+     * they use C compound literals to create 
      * an unnamed array which stays alive while the block is alive.
      *
-     * Since C++ does not support this feature, we must initialize format in an array of 
-     * descriptions elsewhere to be passed to target_info when creating the info properties
-     * for your pipelines.
+     * Since C++ does not support this feature, we must initialize the struct as an array of 
+     * stucts elsewhere to be passed to the graphics pipeline when configuring the info properties
+     *
+     *
+     * These are 
      */
+
     SDL_GPUColorTargetDescription color_target_descriptions [1] =
     {{
          .format = SDL_GetGPUSwapchainTextureFormat(app -> gpx_device, app -> gpx_window)
 
      }};
+
+    SDL_GPUVertexBufferDescription vertex_buffer_description [1] =
+    {{
+         .slot = 0,
+         .pitch = sizeof(gpx::position_color_vertex),
+         .input_rate = SDL_GPU_VERTEXINPUTRATE_VERTEX,
+         .instance_step_rate = 0
+
+     }};
+
+    SDL_GPUVertexAttribute vertex_attributes [2] =
+    {
+        {
+            .location = 0,
+            .buffer_slot = 0,
+            .format = SDL_GPU_VERTEXELEMENTFORMAT_FLOAT3,
+            .offset = 0
+
+        },
+        {
+            .location = 1,
+            .buffer_slot = 0,
+            .format = SDL_GPU_VERTEXELEMENTFORMAT_UBYTE4_NORM,
+            .offset = sizeof(float) * 3
+
+        }
+    };
+
+    // vertex layout of the graphics pipeline
+    SDL_GPUVertexInputState input_state = 
+    {
+        .vertex_buffer_descriptions = vertex_buffer_description,
+        .num_vertex_buffers = 1,
+        .vertex_attributes = vertex_attributes,
+        .num_vertex_attributes = 2
+    };
 
     /*
      * Pipeline configuration
@@ -86,6 +127,7 @@ static int init(gpx::app_state* app)
     {
         .vertex_shader = vertex_shader,
         .fragment_shader = fragment_shader,
+        .vertex_input_state = input_state,
 
         .primitive_type = SDL_GPU_PRIMITIVETYPE_TRIANGLELIST,
         .target_info = 
@@ -127,6 +169,115 @@ static int init(gpx::app_state* app)
      */
     SDL_ReleaseGPUShader(app -> gpx_device, fragment_shader);
     SDL_ReleaseGPUShader(app -> gpx_device, vertex_shader);
+
+    /*
+     * Creating Vertex Buffer
+     */
+    SDL_GPUBufferCreateInfo vertex_info = {
+        .usage = SDL_GPU_BUFFERUSAGE_VERTEX,
+        .size = sizeof(graphix::position_color_vertex) * 3,
+        .props = 0
+    };
+
+    vertex_buffer = SDL_CreateGPUBuffer(
+            app -> gpx_device,
+            &vertex_info
+            );
+
+    /*
+     * Transfer Buffer Configuration
+     */
+    SDL_GPUTransferBufferCreateInfo transfer_info = {
+        .usage = SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD,
+        .size = sizeof(graphix::position_color_vertex) * 3,
+        .props = 0
+    };
+
+    /*
+     * Transfer Buffer initialization
+     * Where all the data lives
+     */
+    SDL_GPUTransferBuffer* transfer_buffer = SDL_CreateGPUTransferBuffer(
+            app -> gpx_device,
+            &transfer_info
+            );
+
+    /*
+     * Associates the data to the transfer buffer
+     * Returns a pointer to the transfer buffer
+     */
+    auto* transfer_data = static_cast<graphix::position_color_vertex*>(SDL_MapGPUTransferBuffer(
+                app -> gpx_device,
+                transfer_buffer,
+                false
+                ));
+
+    /*
+     * Writing rendering data to the data transfer buffer though its pointer
+     *
+     * This data can be anywhere
+     */
+    transfer_data[0] = graphix::position_color_vertex{-1, -1, 0, 255, 0, 0, 255};
+    transfer_data[1] = graphix::position_color_vertex{ 1, -1, 0, 0, 255, 0, 255};
+    transfer_data[2] = graphix::position_color_vertex{ 0,  1, 0, 0, 0, 255, 255};
+
+    /*
+     * Unmapping sets the data into the transfer buffer
+     *
+     * Use when data assignment to the buffer is done
+     * This invalidates the data data pointer
+     */
+    SDL_UnmapGPUTransferBuffer(app -> gpx_device, transfer_buffer);
+
+
+    /*
+     * Data is now in the transfer buffer 
+     * We can now upload the data to the vertex buffer
+     */
+    SDL_GPUCommandBuffer* upload_cmdbf = SDL_AcquireGPUCommandBuffer(app -> gpx_device);
+    SDL_GPUCopyPass* copy_pass = SDL_BeginGPUCopyPass(upload_cmdbf);
+
+    /*
+     * representing our transfer buffer
+     *
+     * will no longer be valid once released from memory
+     */
+    SDL_GPUTransferBufferLocation tbuf_location = {
+        transfer_buffer,
+        0
+    };
+
+    /*
+     * representing our vertex buffer
+     */
+    SDL_GPUBufferRegion buf_region = {
+        vertex_buffer,
+        0,
+        sizeof(graphix::position_color_vertex) * 3
+    };
+
+    /*
+     * transports data from transfer buffer to vertex buffer
+     */
+    SDL_UploadToGPUBuffer(
+            copy_pass,
+            &tbuf_location,
+            &buf_region,
+            false
+    );
+
+    /*
+     * Once the data transfer is done, we submit the buffer
+     * with all of out display commands to the GPU.
+     *
+     * The buffer used to transfer data to the vertex buffer is then
+     * destroyed when no longer needed
+     *
+     */
+    SDL_EndGPUCopyPass(copy_pass);
+    SDL_SubmitGPUCommandBuffer(upload_cmdbf);
+    SDL_ReleaseGPUTransferBuffer(app -> gpx_device, transfer_buffer);
+
 
     /*
      * View Port Prompts
@@ -210,13 +361,23 @@ static int draw(gpx::app_state* app)
         color_info.store_op = SDL_GPU_STOREOP_STORE;
 
         /*
-         * Rendering
+         * Begin Render Pass
          *
          * Here we pass our fill and line pipelines to the render pass for rendering each draw frame
          */
-        
+
         SDL_GPURenderPass* renderPass = SDL_BeginGPURenderPass(cmdbf, &color_info, 1, nullptr);
         SDL_BindGPUGraphicsPipeline(renderPass, use_wireframe_mode ? outline_pipeline : fill_pipeline);
+
+        /*
+         * Binding the vertex buffer to the command buffer
+         */
+        SDL_GPUBufferBinding vertex_buffer_bindings = 
+        {
+            vertex_buffer,
+            0
+        };
+        SDL_BindGPUVertexBuffers(renderPass, 0, &vertex_buffer_bindings, 1);
 
 
         if (use_small_viewport) 
@@ -226,11 +387,20 @@ static int draw(gpx::app_state* app)
         if (use_scissor_rect) 
         {
             SDL_SetGPUScissor(renderPass, &scissor_rect);
-            
+
         }
 
-        // render 3 lines for the triangle
+        /*
+         * SDL_DrawGPUPrimitives takes the data from the render pass object
+         * and uses it as bounds for drawing
+         */
         SDL_DrawGPUPrimitives(renderPass, 3, 1, 0, 0);
+
+        /*
+         * Unbinds all render state of the render pass
+         *
+         * The render pass handle is now invalid
+         */
         SDL_EndGPURenderPass(renderPass);
     }
 
@@ -246,13 +416,21 @@ static int draw(gpx::app_state* app)
 static void quit(gpx::app_state* app)
 {
 
+    /*
+     * freeing pipelines from memory
+     */
     SDL_ReleaseGPUGraphicsPipeline(app -> gpx_device, outline_pipeline);
     SDL_ReleaseGPUGraphicsPipeline(app -> gpx_device, fill_pipeline);
+
+    /*
+     * freeing vertex buffer from memory
+     */
+    SDL_ReleaseGPUBuffer(app -> gpx_device, vertex_buffer);
 
     use_wireframe_mode = false;
     use_small_viewport = false;
     use_scissor_rect = false;
-     gpx::graphix_quit(app);
+    gpx::graphix_quit(app);
 }
 
 gpx_demo::Demo gpx_demo::basic_triangle_demo =

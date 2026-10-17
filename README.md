@@ -64,8 +64,8 @@ Build the application with:
 cmake --build --preset conan-debug
 ```
 
-The executable is `build/Debug/main`. Compile and copy the shaders as described
-below before running the triangle demo.
+The executable is `build/Debug/main`. Pass a demo number when running it.
+Compile and copy the shaders as described below before running a triangle demo.
 
 ### Rebuild and run during development
 
@@ -73,8 +73,16 @@ Run these commands from the project root after changing C++ files:
 
 ```bash
 cmake --build build/Debug
-./build/Debug/main
+./build/Debug/main 0
 ```
+
+Choose the demo by its number:
+
+- `0` — clear screen: `./build/Debug/main 0`
+- `1` — basic triangle: `./build/Debug/main 1`
+- `2` — vertex-buffer triangle: `./build/Debug/main 2`
+
+The program prints the available choices if you omit the number.
 
 After adding or changing HLSL shaders, compile them before rebuilding and running:
 
@@ -83,7 +91,7 @@ export PATH="$PWD/build/SDL_shadercross-build:$PATH"
 mkdir -p shaders/compiled/SPIRV shaders/compiled/MSL shaders/compiled/DXIL
 (cd shaders/source && bash compiles.sh)
 cmake --build build/Debug
-./build/Debug/main
+./build/Debug/main 2
 ```
 
 Build shadercross once using the instructions below before using this block.

@@ -436,7 +436,7 @@ static void quit(gpx::app_state* app)
     gpx::graphix_quit(app);
 }
 
-gpx_demo::Demo gpx_demo::basic_triangle_demo =
+gpx_demo::Demo gpx_demo::vbuff_triangle_demo =
 {
     "BasicTriangle", ::init, ::refresh, ::draw, ::quit 
 };

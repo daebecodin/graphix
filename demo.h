@@ -40,6 +40,7 @@ namespace graphix::demo {
 
     extern Demo clear_screen_demo;
     extern Demo basic_triangle_demo;
+    extern Demo vbuff_triangle_demo;
 
 }
 

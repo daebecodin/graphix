@@ -1,10 +1,38 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
+#include <charconv>
+#include <vector>
+#include <string_view>
 #include "demo.h"
 #include "graphix.h"
 
-int main()
+namespace gpx_demo = graphix::demo;
+
+int main(int argc, char* argv[])
 {
+    std::vector<gpx_demo::Demo*> demos =
+    {
+        &gpx_demo::clear_screen_demo,
+        &gpx_demo::basic_triangle_demo,
+        &gpx_demo::vbuff_triangle_demo
+    };
+
+    if (argc != 2)
+    {
+        SDL_Log("Usage: %s <demo number: 0=clear, 1=triangle, 2=vertex buffer triangle>", argv[0]);
+        return 1;
+    }
+
+    int index = 0;
+    std::string_view argument = argv[1];
+    auto [end, error] = std::from_chars(argument.data(), argument.data() + argument.size(), index);
+    if (error != std::errc{} || end != argument.data() + argument.size() ||
+        index < 0 || static_cast<std::size_t>(index) >= demos.size())
+    {
+        SDL_Log("Invalid demo number: %s (choose 0, 1, or 2)", argv[1]);
+        return 1;
+    }
+
     if (!SDL_Init(SDL_INIT_VIDEO))
     {
         SDL_Log("Failed to initialize SDL: %s", SDL_GetError());
@@ -12,7 +40,8 @@ int main()
     }
 
     graphix::app_state app {};
-    auto& demo = graphix::demo::basic_triangle_demo;
+
+    auto& demo = *demos[index];
     app.appName = demo.name;
     app.basePath = SDL_GetBasePath();
     graphix::init_asset_loader();

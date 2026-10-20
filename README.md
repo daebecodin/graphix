@@ -2,6 +2,10 @@
 
 A C++20 graphics project using SDL3's GPU API and HLSL shaders.
 
+The reusable setup and shader-loading code builds as `Graphix::Core`; the demo
+runner links to it. See the [library structure](docs/library-structure.md) for
+the Graphix, Physix, and simulation-application responsibility boundaries.
+
 ## Project setup (macOS)
 
 Start with Git, [Homebrew](https://brew.sh/), and the Xcode Command Line Tools.

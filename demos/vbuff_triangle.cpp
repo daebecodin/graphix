@@ -235,7 +235,7 @@ static int init(gpx::app_state* app)
 
     /*
      * Data is now in the transfer buffer 
-     * We can now upload the data to the vertex buffer
+     * This begins the data upload to the command buffer
      */
     SDL_GPUCommandBuffer* upload_cmdbf = SDL_AcquireGPUCommandBuffer(app -> gpx_device);
     SDL_GPUCopyPass* copy_pass = SDL_BeginGPUCopyPass(upload_cmdbf);
@@ -322,6 +322,8 @@ static int draw(gpx::app_state* app)
 {
     /*
      * Initialize application command buffer
+     *
+     * It contains the data from the transfer buffer
      */
     SDL_GPUCommandBuffer* cmdbf = SDL_AcquireGPUCommandBuffer(app -> gpx_device);
     if (cmdbf == nullptr)
@@ -366,7 +368,7 @@ static int draw(gpx::app_state* app)
         /*
          * Begin Render Pass
          *
-         * Here we pass our fill and line pipelines to the render pass for rendering each draw frame
+         * Her
          */
 
         SDL_GPURenderPass* renderPass = SDL_BeginGPURenderPass(cmdbf, &color_info, 1, nullptr);
@@ -396,6 +398,11 @@ static int draw(gpx::app_state* app)
         /*
          * SDL_DrawGPUPrimitives takes the data from the render pass object
          * and uses it as bounds for drawing
+         *
+         * 3 veritecies
+         * 1 instance
+         *
+         *
          */
         SDL_DrawGPUPrimitives(renderPass, 3, 1, 0, 0);
 

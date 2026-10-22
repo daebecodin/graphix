@@ -78,8 +78,13 @@ namespace graphix {
             std::uint32_t storage_texture_count,
             std::uint32_t storage_buffer_count,
             std::uint32_t uniform_buffer_count
+            );
 
-);
+    SDL_GPUComputePipeline* create_compute_pipeline(
+            SDL_GPUDevice* device,
+            const char* shader_file_name,
+            SDL_GPUComputePipelineCreateInfo* create_info
+            );
 
 
     /*

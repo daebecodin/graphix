@@ -17,28 +17,6 @@ static SDL_GPUComputePass* compute_pass;
 
 namespace gpx = graphix;
 
-/*
- * Initialization
- *
- *  1.  Load vertex and fragment shaders
- *  2.  Call CreateComputePipelineFromShader to create compute shader
- *      - this is our fill pipeline
- *  3.  Call SDL_CreateGPUGraphicsPipeline to create draw pipeline,
- *      then release shaders
- *
- *  4.  Call SDL_GetWindowSizeInPixels for window dimensions
- *  5.  Call SDL_CreateGPUTexture to initialize the texture
- *  6.  Call SDL_CreateGPUSampler to initialize the sampler
- *  7.  Call SDL_CreateGPUBuffer to initialize the vertex buffer
- *  8.  Call SDL_CreateGPUTransferBuffer to initialize the transfer buffer
- *  9.  Call SDL_MapGPUTransferBuffer to create a data transfer object to associate your data to the transfer buffer
- *  10. Data Stuff
- *  11. Call SDL_UnmapGPUTransferBuffer to send our data to the transfer buffer associated with the gpu
- *  12. Call SDL_AcquireGPUCommandBuffer and SDL_BeginGPUCopyPass to begin data upload to the gpu
- *  13. Call SDL_UploadToGPUBuffer to upload the transfer buffer data to the vertex buffer
- *  14. Call SDL_EndGPUCopyPass
- *  15. Call SDL_BeginGPUComputePass
- */
 
 static int init(graphix::app_state* app)
 {
@@ -159,6 +137,7 @@ static int init(graphix::app_state* app)
 
     /*
      * Window Dimensions
+     *
      * will be applied to the texture dimensions
      */
     int w, h;
@@ -169,8 +148,8 @@ static int init(graphix::app_state* app)
      *
      * First by defining the texture
      *
-     * Second by defining how the GPU interacts 
-     * with the texture.
+     * Second by defining sampler, who describes how the GPU uses 
+     * the texture.
      */
     SDL_GPUTextureCreateInfo texture_info{};
     texture_info.type = SDL_GPU_TEXTURETYPE_2D;
@@ -216,13 +195,10 @@ static int init(graphix::app_state* app)
     /*
      * Map Data To Transfer Buffer
      *
-     * Creates a data pointer
-     *
      * We associate the buffer holding our data to our GPU device before
      * writing to the buffer
      *
-     * the map call returns a void pointer so we check
-     * so we check for nullptr and explicitly convert it 
+     * Returns a pointer to the transfer_buffer memory
      */
     auto* transfer_data = static_cast<gpx::position_texture_vertex*>(
             SDL_MapGPUTransferBuffer(
@@ -293,7 +269,7 @@ static int init(graphix::app_state* app)
     SDL_EndGPUCopyPass(copy_pass);
 
     /* Starting the compute pass to let the GPU handle
-     * texture rendering
+     * texture writing
      *
      * We associate the fill compute pipeline to the
      * command buffer
@@ -332,13 +308,13 @@ static int init(graphix::app_state* app)
     SDL_EndGPUComputePass(compute_pass);
 
     /*
-     * Once the shaders are compiled, we submit the command buffer
+     * We submit the command buffer
      * to the GPU to be executed
      */
     SDL_SubmitGPUCommandBuffer(cmdbfr);
 
     /*
-     * Release the compute buffers from memory when safe to do so
+     * Release buffers and pipelines buffers from memory when safe to do so
      */
     SDL_ReleaseGPUTransferBuffer(app -> gpx_device, transfer_buffer);
     SDL_ReleaseGPUComputePipeline(app -> gpx_device, fill_pipeline);
